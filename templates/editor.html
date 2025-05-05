@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="editor-container">
@@ -15,9 +18,9 @@
                 <h1>PowerPoint Generator</h1>
             </div>
             <div class="editor-controls">
-                <button id="save-btn" class="btn save-btn"><i class="fas fa-save"></i> Save</button>
-                <button id="export-btn" class="btn export-btn" disabled><i class="fas fa-file-export"></i> Export</button>
-                <a href="{{ url_for('dashboard') }}" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                <button id="save-btn" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                <button id="export-btn" class="btn btn-secondary" disabled><i class="fas fa-file-export"></i> Export</button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Dashboard</a>
             </div>
         </header>
         
@@ -27,30 +30,63 @@
                     <h2>Generate Presentation</h2>
                     
                     <div class="form-group">
-                        <label for="topic">Presentation Topic:</label>
-                        <input type="text" id="topic" placeholder="Enter your presentation topic" 
+                        <label for="topic">Topic</label>
+                        <input type="text" id="topic" class="form-control" placeholder="Enter your presentation topic" 
                                value="{{ presentation.topic if presentation else '' }}">
                     </div>
                     
                     <div class="form-group">
-                        <label for="slide-count">Number of Slides:</label>
-                        <input type="number" id="slide-count" min="1" max="10" 
+                        <label for="slide-count">Slides</label>
+                        <input type="number" id="slide-count" class="form-control" min="1" max="10" 
                                value="{{ presentation.slide_count if presentation else 5 }}">
                     </div>
                     
                     <div class="template-selection">
-                        <h3>Select a Template</h3>
+                        <h3>Choose Template</h3>
                         <div id="templates-container" class="templates-grid">
                             <!-- Templates will be dynamically inserted here -->
                         </div>
                     </div>
                     
                     <div class="action-buttons">
-                        <button id="generate-btn" class="btn primary-btn"><i class="fas fa-magic"></i> Generate Slides</button>
-                        <button id="regenerate-btn" class="btn secondary-btn" disabled><i class="fas fa-sync-alt"></i> Regenerate</button>
+                        <button id="generate-btn" class="btn btn-primary"><i class="fas fa-magic"></i> Generate</button>
+                        <button id="regenerate-btn" class="btn btn-secondary" disabled><i class="fas fa-sync-alt"></i> Regenerate</button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="preview-section">
+                <div class="preview-header">
+                    <h2>Slide Preview</h2>
+                    <div class="slide-controls" id="slide-controls">
+                        <!-- Slide controls will be dynamically inserted here -->
                     </div>
                 </div>
                 
+                <div class="preview-edit-wrapper">
+                    <div class="preview-container">
+                        <div id="slide-preview" class="slide-preview">
+                            <div class="placeholder-message">
+                                Your slide preview will appear here after generating content.
+                            </div>
+                        </div>
+                        <div id="loading" class="loading-overlay hidden">
+                            <div class="loading-spinner"></div>
+                            <p>Generating your presentation...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="edit-form" class="edit-form hidden">
+                        <!-- Edit form content will be dynamically inserted here -->
+                    </div>
+                </div>
+                
+                <div id="external-edit-controls" class="edit-controls hidden">
+                    <button id="edit-slide-btn" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Slide</button>
+                </div>
+            </section>
+            
+            <section class="right-sidebar">
                 <div class="slides-panel">
                     <h2>Slides</h2>
                     <div id="slides-list">
@@ -59,34 +95,10 @@
                     </div>
                 </div>
             </section>
-            
-            <section class="preview-section">
-                <div id="loading" class="loading-overlay hidden">
-                    <div class="loading-spinner"></div>
-                    <p>Generating your presentation...</p>
-                </div>
-                
-                <div class="preview-header">
-                    <h2>Slide Preview</h2>
-                    <div class="slide-controls" id="slide-controls">
-                        <!-- Slide controls will be dynamically inserted here -->
-                    </div>
-                </div>
-                
-                <div id="slide-preview" class="slide-preview">
-                    <div class="placeholder-message">
-                        Your slide preview will appear here after generating content.
-                    </div>
-                </div>
-                
-                <div id="external-edit-controls" class="edit-controls hidden">
-                    <button id="edit-slide-btn" class="edit-btn">Edit Slide Content</button>
-                </div>
-            </section>
         </main>
     </div>
     
-    <!-- Success/Error notification toast -->
+    <!-- Notification Toast -->
     <div id="notification" class="notification">
         <div class="notification-content">
             <i class="notification-icon"></i>
@@ -94,7 +106,7 @@
         </div>
     </div>
     
-    <!-- Script imports -->
+    <!-- Script Imports -->
     <script src="{{ url_for('static', filename='js/templates.js') }}"></script>
     <script src="{{ url_for('static', filename='js/layouts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
