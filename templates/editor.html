@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation Editor - PowerPoint Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="editor-container">
+        <header class="editor-header">
+            <div class="logo">
+                <h1>PowerPoint Generator</h1>
+            </div>
+            <div class="editor-controls">
+                <button id="save-btn" class="btn save-btn"><i class="fas fa-save"></i> Save</button>
+                <button id="export-btn" class="btn export-btn" disabled><i class="fas fa-file-export"></i> Export</button>
+                <a href="{{ url_for('dashboard') }}" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            </div>
+        </header>
+        
+        <main class="editor-main">
+            <section class="sidebar">
+                <div class="generation-panel">
+                    <h2>Generate Presentation</h2>
+                    
+                    <div class="form-group">
+                        <label for="topic">Presentation Topic:</label>
+                        <input type="text" id="topic" placeholder="Enter your presentation topic" 
+                               value="{{ presentation.topic if presentation else '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="slide-count">Number of Slides:</label>
+                        <input type="number" id="slide-count" min="1" max="10" 
+                               value="{{ presentation.slide_count if presentation else 5 }}">
+                    </div>
+                    
+                    <div class="template-selection">
+                        <h3>Select a Template</h3>
+                        <div id="templates-container" class="templates-grid">
+                            <!-- Templates will be dynamically inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="generate-btn" class="btn primary-btn"><i class="fas fa-magic"></i> Generate Slides</button>
+                        <button id="regenerate-btn" class="btn secondary-btn" disabled><i class="fas fa-sync-alt"></i> Regenerate</button>
+                    </div>
+                </div>
+                
+                <div class="slides-panel">
+                    <h2>Slides</h2>
+                    <div id="slides-list">
+                        <!-- Slide thumbnails will be inserted here -->
+                        <div class="slides-placeholder">Slides will appear here after generation</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="preview-section">
+                <div id="loading" class="loading-overlay hidden">
+                    <div class="loading-spinner"></div>
+                    <p>Generating your presentation...</p>
+                </div>
+                
+                <div class="preview-header">
+                    <h2>Slide Preview</h2>
+                    <div class="slide-controls" id="slide-controls">
+                        <!-- Slide controls will be dynamically inserted here -->
+                    </div>
+                </div>
+                
+                <div id="slide-preview" class="slide-preview">
+                    <div class="placeholder-message">
+                        Your slide preview will appear here after generating content.
+                    </div>
+                </div>
+                
+                <div id="external-edit-controls" class="edit-controls hidden">
+                    <button id="edit-slide-btn" class="edit-btn">Edit Slide Content</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Success/Error notification toast -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <i class="notification-icon"></i>
+            <span class="notification-message"></span>
+        </div>
+    </div>
+    
+    <!-- Script imports -->
+    <script src="{{ url_for('static', filename='js/templates.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/layouts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+    
+    <script>
+        // Initialize with existing presentation data if editing
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if presentation %}
+                window.existingPresentation = {{ presentation|tojson|safe }};
+            {% else %}
+                window.existingPresentation = null;
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
